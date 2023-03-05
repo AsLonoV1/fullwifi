@@ -11,7 +11,7 @@ class WareHouseCreateRequest extends FormRequest
         return [
             "code"=>"required|unique:ware_houses,code",
             "title"=>"required|string",
-            "type_id"=>"required_if:type_id,true|exists:types,id"
+            "type_id"=>"nullable|exists:types,id"
         ];
     }
 }

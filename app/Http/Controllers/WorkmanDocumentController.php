@@ -62,8 +62,9 @@ class WorkmanDocumentController extends Controller
            if(!is_null($request->address))$document->address = $request->address;
             $document->save();
             $products = $request->products;
+            $this->deleteProduct($request->id);
             foreach ($products as $product) {
-                $this->updateProduct($product);
+                $this->addProduct($request->id,$product);
             }
             DB::commit();
             return response()->json(['success' => 'ok']);
@@ -71,6 +72,9 @@ class WorkmanDocumentController extends Controller
             DB::rollBack();
             return response()->json(['error' => ["message" => $e->getMessage()]],503);
         }
+    }
+    public function deleteProduct(int $document_id){
+        DocumentProduct::where('document_id',$document_id)->delete();
     }
     public function updateProduct(array $data)
     {

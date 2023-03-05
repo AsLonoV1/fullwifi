@@ -9,6 +9,11 @@ use App\Http\Requests\ReturnedRequest;
 
 class DocumentController extends Controller
 {
+    public static $status = [
+        2 => 3,
+        3 => 4,
+        4 => 5
+    ];
     // public function list()
     // {
     //     switch(Auth::user()->role_id){
@@ -29,61 +34,51 @@ class DocumentController extends Controller
     //     }
     //     return Document::where($where)->with('products')->get();
     // }
-    public function list1()
+    public function list()
     {
-        switch(Auth::user()->role_id){
+        switch (Auth::user()->role_id) {
             case 2: {
-                return Document::where('status',2)
-                ->where('user_id',Auth::user()->id)
-                ->with('products')->get();
-             }
+                    $where = [
+                        ['status', 2],
+                        ['user_id', Auth::user()->id]
+                    ];
+                    break;
+                }
             case 3: {
-                return Document::where('status',3)
-                ->where('senior_id',Auth::user()->id)
-                ->with('products')->get();
-             }
+                    $where = [
+                        ['status', 3],
+                        ['user_id', Auth::user()->id]
+                    ];
+                    break;
+                }
             case 4: {
-                return Document::where('status',4)
-                ->with('products')->get();
-             }
-            case 5: { 
-                return Document::where('status',5)
-                ->with('products')->get();
-            }
+                    $where = ['status', 4];
+                    break;
+                }
+            case 5: {
+                    $where = ['status', 4];
+                    break;
+                }
         }
+        return Document::where($where)->with('products')->get();
     }
     public function send(Request $request)
     {
-        switch(Auth::user()->role_id){
-            case 2: {
-                $workman =Document::findOrFail($request->id);
-                $workman->status=3;
-                $workman->save();
-                break;
-            }
-            case 3: {
-                $chief =Document::findOrFail($request->id);
-                $chief->status=4;
-                $chief->save();
-                break;
-            }
-            case 4: {
-                $director =Document::findOrFail($request->id);
-                $director->status=5;
-                $director->save();
-                break;
-            }
-        }
-        return response()->json(['success'=>'ok']);
-       
+        $this->updateStatus($request->id, self::$status[Auth::user()->role_id]);
+        return response()->json(['success' => 'ok']);
+    }
+    public function updateStatus($id, $status)
+    {
+        $director = Document::findOrFail($id);
+        $director->status = $status;
+        $director->save();
     }
     public function unsend(ReturnedRequest $request)
     {
-        $document =Document::findOrFail($request->id);
-        $document->status=0;
-        $document->comment=$request->comment;
+        $document = Document::findOrFail($request->id);
+        $document->status = 0;
+        $document->comment = $request->comment;
         $document->save();
-        return response()->json(['success'=>'ok']);
+        return response()->json(['success' => 'ok']);
     }
-
 }

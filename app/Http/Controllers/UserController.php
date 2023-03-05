@@ -16,9 +16,9 @@ class UserController extends Controller
         return User::paginate($request->per_page ?: 10);
     }
 
-    public function show(Request $request)
+    public function show($id)
     {
-        return User::where('id', $request->id)->first();
+        return User::where('id', $id)->first();
     }
 
     public function create(UserCreateRequest $request)
@@ -35,7 +35,7 @@ class UserController extends Controller
             $user->save();
             return response()->json(['success'=>'ok']);
         }catch (QueryException $e){
-            return response()->json(['error'=>['message'=>$e->getMessage()]],400);
+            return response()->json(['error'=>['message'=>$e->getMessage(),'code'=>4551515]],400);
         }
     }
 
@@ -53,7 +53,7 @@ class UserController extends Controller
             $user->save();
             return response()->json($user);
         }catch (QueryException $e){
-            return response()->json(['error'=>['message'=>$e->getMessage()]],400);
+            return response()->json(['error'=>['message'=>$e->getMessage(),'code'=>1]],400);
         }
     }
     

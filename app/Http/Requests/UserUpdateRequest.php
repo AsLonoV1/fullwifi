@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Contracts\Validation\Validator;
 class UserUpdateRequest extends FormRequest
 {
     public function rules(): array
@@ -18,5 +18,9 @@ class UserUpdateRequest extends FormRequest
             'email'=>'required_if:email,true|email',
             'password'=>'required_if:password,true|string|min:4',
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        dd($validator->errors());
     }
 }
